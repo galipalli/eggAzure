@@ -1,0 +1,34 @@
+trigger:
+  - main
+        
+resources:
+  repositories:
+    - repository: sourceRepo
+      type: github
+      name: TestPlant/eggplant-azure-devops
+      endpoint: github.com_foomunleong
+jobs:
+  - job: Run_Test_Config
+    strategy:
+      maxParallel: 1
+      matrix:
+        linux:
+          imageName: 'ubuntu-latest'
+        mac:
+          imageName: 'macOS-latest'
+        windows:
+          imageName: 'windows-latest'
+      
+    pool: 
+      vmImage: $(imageName)
+    steps:
+      - template: templates/run-test-config.yml@sourceRepo
+        parameters:
+          dryRun: true
+          clientID: client:dai:agent:integration
+          serverURL: https://foomunle-aub-12401-6.dai.webperfdev.com
+          testConfigID: 3d41a425-cd7a-4c93-9741-5dd1c007222c
+          # alternatively, one could set a pipeline secret in Azure Pipeline Editor
+          # and refer to it like below.
+          # clientSecret: $(DAI_CLIENT_SECRET)
+          clientSecret: e9c15662-8c1b-472e-930d-aa0b11726093
